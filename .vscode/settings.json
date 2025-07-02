@@ -1,0 +1,12 @@
+{
+  "remote.portsAttributes": {
+    "8000": {
+      "visibility": "public",
+      "label": "FastAPI Backend"
+    },
+    "3000": {
+      "visibility": "public", 
+      "label": "React Frontend"
+    }
+  }
+}

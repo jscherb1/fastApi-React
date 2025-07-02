@@ -2,6 +2,8 @@ cd backend
 pip install requirements -r requirements.txt
 
 test running the app: fastapi run main.py
+OR
+fastapi dev main.py --port 8000
 
 create the docker image: docker build -t fastapi-app .
 
