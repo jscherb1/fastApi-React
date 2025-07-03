@@ -84,6 +84,7 @@ function App() {
       <div className="container">
         <header className="header">
           <h1>🚀 FastAPI + React Demo</h1>
+          <p> My first live change!</p>
           <p>Enter your name to get a personalized greeting from the FastAPI backend</p>
         </header>
 

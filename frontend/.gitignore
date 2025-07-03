@@ -31,4 +31,4 @@ yarn-error.log*
 Thumbs.db
 
 #CUSTOM
-.env
+*.env
