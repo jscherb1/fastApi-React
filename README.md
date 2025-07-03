@@ -1,6 +1,12 @@
 # fastApi-React
 The purpose of the repository is to provide a base template for fullstack web development, featuring a frontend built with React and a backend powered by FastAPI.
 
+# Clone the Repo
+Clone the repo to bring it into your own environment.
+```
+git clone https://github.com/jscherb1/fastApi-React.git
+```
+
 # Development Environment
 
 ## Coding Environment
