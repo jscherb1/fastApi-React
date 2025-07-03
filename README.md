@@ -1,184 +1,282 @@
-# fastApi-React
-The purpose of the repository is to provide a base template for fullstack web development, featuring a frontend built with React and a backend powered by FastAPI.
+# 🚀 FastAPI + React Template
 
-# Clone the Repo
-Clone the repo to bring it into your own environment.
-```
+> 🎯 **Purpose**: A complete fullstack web development template featuring a **React** frontend and **FastAPI** backend, ready for rapid development and deployment.
+
+---
+
+## 📥 Getting Started
+
+### Clone the Repository
+```bash
 git clone https://github.com/jscherb1/fastApi-React.git
 ```
 
-# Development Environment
+---
 
-## Coding Environment
+## 🛠️ Development Environment
 
-It is recommended to use GitHub Codespaces as your coding environment. Codespaces come pre-installed with tools such as Docker and Git.
+### 💻 Recommended Coding Environment
 
-> **Note:** This setup has not been tested for local environments! Local installation requirements may vary.
+**GitHub Codespaces** (Recommended) - Comes pre-configured with:
+- 🐳 Docker
+- 📝 Git
+- 🔧 Development tools
 
-## Recommended Extensions
+> ⚠️ **Note**: This setup has not been tested for local environments! Local installation requirements may vary.
 
-- Copilot
-- Python
+### 🔌 Recommended VS Code Extensions
 
-# Local Development
-## Set environment variables
-Use the .env.example files for reference to create a .env file and set the appropriate variables.
+- 🤖 **GitHub Copilot** - AI pair programming
+- 🐍 **Python** - Python language support
 
-## Run the Docker container
-From a terminal, run:
+---
+
+## 🏃‍♂️ Local Development
+
+### 🔐 Environment Configuration
+Create your environment file using the provided template:
+```bash
+# Use .env.example files as reference to create your .env file
+cp .env.example .env
+# Set the appropriate variables for your environment
+```
+
+### 🐳 Running with Docker
+Launch both frontend and backend containers:
 ```bash
 docker-compose up
 ```
-This will build and run the two docker container images: frontend and backend.
+This command will:
+- 🔨 Build the Docker images
+- ▶️ Start both frontend and backend containers
+- 🔗 Set up container networking
 
-## Port Forwarding
-⚠️**Important:** After running the docker images, be sure to change the backend port (by default port 8000) to Public visibility. Without this change, your front end container can not communicate with the backend container. ⚠️
+### ⚠️ Important: Port Configuration
+After starting the containers:
 
-# Deployment
-The assumption is that you're deploying your application to Azure using containers and app services.
+> **🚨 Critical Step**: Change the backend port (default: `8000`) to **Public visibility** in your development environment. Without this change, the frontend container cannot communicate with the backend container.
 
-## Pre-requisites
-To install the Azure CLI, run:
+---
+
+## ☁️ Azure Deployment
+
+> 📋 **Deployment Target**: Azure Container Services with App Services
+
+### 🔧 Prerequisites
+
+Install Azure CLI:
 ```bash
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
-This is required to perform Azure operations from the command line.
+This enables Azure operations from the command line.
 
-## Deploying Cloud Resources
+### 🏗️ Required Azure Resources
 
-### Required Resources
-- Azure Container Services: 
-- Web App (Front End)
-- Web App (Back End)
+| Resource Type | Purpose |
+|---------------|---------|
+| 📦 **Azure Container Registry** | Store container images |
+| 🌐 **Web App (Frontend)** | Host React application |
+| ⚙️ **Web App (Backend)** | Host FastAPI application |
 
-### Steps
-1. Create a resource group
-2. Deploy a Azure Container Services resource
-3. Deploy a Web App (frontend)
-    - Create a basic web app with the container deployment and linux OS. Choose a quickstart container.  This will be changed later.
-4. Deploy a Web App (backend)
-    - Create a basic web app with the container deployment and linux OS. Choose a quickstart container.  This will be changed later.
+### 📋 Deployment Steps
 
-5. Configure Resources
+#### 1️⃣ Create Resource Group
+```bash
+# Create a new resource group for your application
+az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_LOCATION>
+```
 
-    Web App (Both frontend and backend):
-    - Change the configuration for SCM Basic Auth Publishing to On
-    - Change the identity to On (creating a system assigned identity)
-    - Create and set environment variables for your application
+#### 2️⃣ Deploy Azure Container Registry
+```bash
+# Create container registry to store your images
+az acr create --resource-group <YOUR_RESOURCE_GROUP> --name <YOUR_ACR_NAME> --sku Basic
+```
 
-    Container Registry:
-    - IAM (Access Control) create a role for the system assigned identity created for the web app. ACR Pull as the role. Members -> Managed Identity -> App Service and find the managed identity for the app you just created.
+#### 3️⃣ Deploy Web Apps
+Create both frontend and backend web apps:
 
-6. Push containers to the registry
-    - Use the manual or automated process to build and push the containers to the registry. This is a pre-requisite to have images in the registry so you can configure you applications to use the images.
-7. Connect the Web App to the proper container (both Web App resources)
-    - Click Ops:
-        - From the Deployment center in each web app resource, click the container name (there should be a default container name from the quickstart that was deployed). Then change the source to an Azure Container Registry and the registry you deployed. Authentication = managed identity. Identity = system assigned. Image = the name of the image from the container registry (this is manually entered when you have a system identity). Image tag (latest) or whatever you used when creating the image.
-    - Command Line:
-        - Backend:
-        ⚠️ Set the appropriate variables before running!
-        ```bash
-        echo "🔄 Updating backend container settings..."
-        az webapp config container set \
-          --name $BACKEND_WEB_APP_NAME \
-          --resource-group $RESOURCE_GROUP \
-          --docker-custom-image-name $ACR_LOGIN_SERVER/backend:latest \
-          --docker-registry-server-url https://$ACR_LOGIN_SERVER
-        ```
-        - Frontend:
-        ⚠️ Set the appropriate variables before running!
-        ```bash
-        echo "🔄 Updating frontend container settings..."
-        az webapp config container set \
-          --name $FRONTEND_WEB_APP_NAME \
-          --resource-group $RESOURCE_GROUP \
-          --docker-custom-image-name $ACR_LOGIN_SERVER/frontend:latest \
-          --docker-registry-server-url https://$ACR_LOGIN_SERVER
-        ```
-8. Restart the Web App Resources
-    - Click Ops:
-        - In the Azure Portal for each resource, manually restart the web app. It will take a few minutes for the web app to pull the new image and use the new code.
-    - Command Line
-        - Backend:
-        ⚠️ Set the appropriate variables before running!
-        ```bash
-        echo "🔄 Restarting backend web app..."
-        az webapp restart --name $BACKEND_WEB_APP_NAME --resource-group $RESOURCE_GROUP
-        ```
-        - Frontend:
-        ⚠️ Set the appropriate variables before running!
-        ```bash
-        echo "🔄 Restarting frontend web app..."
-        az webapp restart --name $FRONTEND_WEB_APP_NAME --resource-group $RESOURCE_GROUP
-        ```
+**Frontend Web App:**
+```bash
+# Create web app with container deployment and Linux OS
+az webapp create --resource-group <YOUR_RESOURCE_GROUP> --plan <YOUR_APP_SERVICE_PLAN> --name <FRONTEND_APP_NAME> --deployment-container-image-name nginx
+```
 
-## GitHub Configuration
-## Create a Service Principal to do the deployments
-From the command line run the following command:
+**Backend Web App:**
+```bash
+# Create web app with container deployment and Linux OS  
+az webapp create --resource-group <YOUR_RESOURCE_GROUP> --plan <YOUR_APP_SERVICE_PLAN> --name <BACKEND_APP_NAME> --deployment-container-image-name nginx
+```
+
+#### 4️⃣ Configure Resources
+
+**📱 Web App Configuration (Both Apps):**
+- ✅ Enable SCM Basic Auth Publishing
+- 🔐 Enable System Assigned Identity
+- 🔧 Set environment variables for your application
+
+**📦 Container Registry Configuration:**
+- 👤 **IAM Access Control**: Assign `AcrPull` role to web app managed identities
+- 🎯 **Target**: App Service managed identities created in previous step
+
+#### 5️⃣ Push Containers to Registry
+Build and push your container images (see [Build Scripts](#-build-and-push-containers) section below)
+
+#### 6️⃣ Connect Web Apps to Containers
+
+**🖱️ Portal Method:**
+1. Navigate to **Deployment Center** in each web app
+2. Select **Azure Container Registry** as source
+3. Choose **Managed Identity** authentication
+4. Select **System Assigned** identity
+5. Enter image name and tag (e.g., `latest`)
+
+**💻 Command Line Method:**
+
+**Backend Configuration:**
+> ⚠️ Set the appropriate variables before running!
+
+```bash
+echo "🔄 Updating backend container settings..."
+az webapp config container set \
+  --name $BACKEND_WEB_APP_NAME \
+  --resource-group $RESOURCE_GROUP \
+  --docker-custom-image-name $ACR_LOGIN_SERVER/backend:latest \
+  --docker-registry-server-url https://$ACR_LOGIN_SERVER
+```
+
+**Frontend Configuration:**
+> ⚠️ Set the appropriate variables before running!
+
+```bash
+echo "🔄 Updating frontend container settings..."
+az webapp config container set \
+  --name $FRONTEND_WEB_APP_NAME \
+  --resource-group $RESOURCE_GROUP \
+  --docker-custom-image-name $ACR_LOGIN_SERVER/frontend:latest \
+  --docker-registry-server-url https://$ACR_LOGIN_SERVER
+```
+
+#### 7️⃣ Restart Web Applications
+
+**🖱️ Portal Method:**
+Manually restart each web app in the Azure Portal (takes a few minutes to pull new images)
+
+**💻 Command Line Method:**
+
+**Restart Backend:**
+> ⚠️ Set the appropriate variables before running!
+
+```bash
+echo "🔄 Restarting backend web app..."
+az webapp restart --name $BACKEND_WEB_APP_NAME --resource-group $RESOURCE_GROUP
+```
+
+**Restart Frontend:**
+> ⚠️ Set the appropriate variables before running!
+
+```bash
+echo "🔄 Restarting frontend web app..."
+az webapp restart --name $FRONTEND_WEB_APP_NAME --resource-group $RESOURCE_GROUP
+```
+
+---
+
+## 🔐 GitHub Configuration
+
+### 👤 Create Service Principal
+
+Create a service principal for automated deployments:
 ```bash
 az ad sp create-for-rbac --name "github-acr-push" --role acrpush --scopes $(az acr show --name <ACR_NAME> --query id --output tsv)
 ```
-Be sure to replace the <ACR_NAME> with the name of your Azure Container Registry (e.g. myregistry)
+> 📝 Replace `<ACR_NAME>` with your Azure Container Registry name
 
-Example output:
+**Example Output:**
 ```json
 {
   "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-  "displayName": "github-acr-push",
+  "displayName": "github-acr-push", 
   "password": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "tenant": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 ```
-Keep this output safe — you'll need the values for GitHub secrets.
+> 🔒 **Important**: Save this output securely - you'll need these values for GitHub secrets!
 
 
-### GitHub Secrets
-#### Collect required values
-| Secret Name             | Value                                            |
-| ----------------------- | ------------------------------------------------ |
-| `AZURE_CLIENT_ID`       | `"appId"` from output                            |
-| `AZURE_CLIENT_SECRET`   | `"password"` from output                         |
-| `AZURE_TENANT_ID`       | `"tenant"` from output                           |
-| `AZURE_SUBSCRIPTION_ID` | Run: `az account show --query id -o tsv`         |
-| `ACR_NAME`              | Your ACR name (e.g., `myregistry`)               |
-| `ACR_LOGIN_SERVER`      | ACR login server (e.g., `myregistry.azurecr.io`) |
+### 🔑 GitHub Secrets Configuration
 
-#### Add GitHub Secrets
-In your GitHub repo:
-1. Go to Settings → Secrets and variables → Actions.
-2. Click New repository secret for each of the following:
+#### 📋 Required Values Collection
 
-| Name                    | Value                                      |
-| ----------------------- | ------------------------------------------ |
-| `AZURE_CLIENT_ID`       | From service principal `appId`             |
-| `AZURE_CLIENT_SECRET`   | From service principal `password`          |
-| `AZURE_TENANT_ID`       | From service principal `tenant`            |
-| `AZURE_SUBSCRIPTION_ID` | From `az account show`                     |
-| `ACR_NAME`              | Your ACR name                              |
-| `ACR_LOGIN_SERVER`      | Your ACR login server (with `.azurecr.io`) |
+| Secret Name | Source | Command |
+|------------|--------|---------|
+| `AZURE_CLIENT_ID` | Service Principal `appId` | From output above |
+| `AZURE_CLIENT_SECRET` | Service Principal `password` | From output above |
+| `AZURE_TENANT_ID` | Service Principal `tenant` | From output above |
+| `AZURE_SUBSCRIPTION_ID` | Azure Subscription | `az account show --query id -o tsv` |
+| `ACR_NAME` | Container Registry | Your ACR name (e.g., `myregistry`) |
+| `ACR_LOGIN_SERVER` | Container Registry | Your ACR login server (e.g., `myregistry.azurecr.io`) |
 
+#### ➕ Adding Secrets to GitHub
 
-#### Validate Access (Optional) 
-Run this from the command line to test that your service principal is functional:
+1. 🔗 Navigate to your GitHub repository
+2. ⚙️ Go to **Settings** → **Secrets and variables** → **Actions**
+3. 🆕 Click **"New repository secret"** for each value:
+
+| Secret Name | Value Source |
+|------------|--------------|
+| `AZURE_CLIENT_ID` | Service principal `appId` |
+| `AZURE_CLIENT_SECRET` | Service principal `password` |
+| `AZURE_TENANT_ID` | Service principal `tenant` |
+| `AZURE_SUBSCRIPTION_ID` | Output from `az account show` |
+| `ACR_NAME` | Your Container Registry name |
+| `ACR_LOGIN_SERVER` | Your ACR login server (with `.azurecr.io`) |
+
+#### 🧪 Validate Access (Optional)
+
+Test your service principal configuration:
 ```bash
+# Login with service principal
 az login --service-principal -u <appId> -p <password> --tenant <tenant>
+
+# Test ACR access
 az acr login --name <ACR_NAME>
 ```
 
-## Build and Push Containers to Registry
-### Manual Scripts
-There are scripts created that allow you to manually 
+---
 
-Modify the scripts with the correct arguments (e.g. ACR_NAME) to perform the deployments
+## 🚢 Build and Push Containers
 
-Make scripts executable
+### 🔨 Manual Build Scripts
+
+The repository includes pre-built scripts for manual deployment:
+
+#### 🔧 Make Scripts Executable
 ```bash
 chmod +x scripts/*.sh
 ```
 
-Run the command from the root directory:
+#### 🚀 Build and Push All Containers
 ```bash
+# Run from the root directory
 ./scripts/build-and-push-all.sh v1.0.0
 ```
-### Automated CI/CD
-Make a change to the code and push the changes to the main branch (either directly or through a PR). This should trigger the GitHub Actions to run which will build and push your images to the container registry automatically.
+
+> 📝 **Note**: Modify scripts with correct arguments (e.g., `ACR_NAME`) before running
+
+### 🤖 Automated CI/CD Pipeline
+
+**Trigger Deployment:**
+1. ✏️ Make changes to your code
+2. 📤 Push to the `main` branch (directly or via Pull Request)
+3. ⚡ GitHub Actions automatically builds and pushes images to your container registry
+
+---
+
+## 📚 Additional Resources
+
+- 📖 [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- ⚛️ [React Documentation](https://react.dev/)
+- ☁️ [Azure Container Apps](https://docs.microsoft.com/en-us/azure/container-apps/)
+- 🐳 [Docker Documentation](https://docs.docker.com/)
+
+---
