@@ -9,20 +9,23 @@ function App() {
 
   // Dynamic API base URL detection
   const getApiBaseUrl = () => {
-    // Check if we have an environment variable set
+    // Check runtime environment first (for Azure deployment)
+    if (window._env_ && window._env_.REACT_APP_API_BASE_URL) {
+      return window._env_.REACT_APP_API_BASE_URL;
+    }
+    
+    // Check if we have an environment variable set (for local development)
     if (process.env.REACT_APP_API_BASE_URL) {
       return process.env.REACT_APP_API_BASE_URL;
     }
     
     // Auto-detect Codespaces environment
     if (process.env.CODESPACE_NAME) {
-      // In Codespaces, construct the URL using the codespace name
       return `https://${process.env.CODESPACE_NAME}-8000.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`;
     }
     
-    // Check if we're in a forwarded port environment (common pattern)
+    // Check if we're in a forwarded port environment
     if (window.location.hostname.includes('app.github.dev')) {
-      // Extract the base hostname and construct backend URL
       const hostname = window.location.hostname;
       const baseUrl = hostname.replace('-3000.', '-8000.');
       return `https://${baseUrl}`;
@@ -84,7 +87,7 @@ function App() {
       <div className="container">
         <header className="header">
           <h1>🚀 FastAPI + React Demo</h1>
-          <p> My first live change!</p>
+          <p> My first live change!!!</p>
           <p>Enter your name to get a personalized greeting from the FastAPI backend</p>
         </header>
 
